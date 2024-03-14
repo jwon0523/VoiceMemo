@@ -5,8 +5,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct TodoListView: View {
     @EnvironmentObject private var pathModel: PathModel
     @EnvironmentObject private var todoListViewModel: TodoListViewModel
@@ -132,7 +130,8 @@ private struct TodoCellView: View {
         isRemoveSelected: Bool = false,
         todo: Todo
     ) {
-        _isRemoveSelected = State(initialValue: isRemoveSelected)
+        //        _isRemoveSelected = State(initialValue: isRemoveSelected)
+        self.isRemoveSelected = isRemoveSelected
         self.todo = todo
     }
     
@@ -204,6 +203,7 @@ private struct WriteTodoBtnView: View {
         }
     }
 }
+
 struct TodoListView_Previews: PreviewProvider {
     static var previews: some View {
         TodoListView()
