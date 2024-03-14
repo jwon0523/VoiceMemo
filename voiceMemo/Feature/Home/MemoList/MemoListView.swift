@@ -9,7 +9,6 @@ struct MemoListView: View {
     @EnvironmentObject private var pathModel: PathModel
     @EnvironmentObject private var memoListViewModel: MemoListViewModel
     
-    
     var body: some View {
         ZStack {
             VStack {
@@ -120,6 +119,7 @@ private struct MemoListContentView: View {
     }
 }
 
+// MARK: - 메모 셀 뷰
 private struct MemoCellView: View {
     @EnvironmentObject private var pathModel: PathModel
     @EnvironmentObject private var memoListViewModel: MemoListViewModel
@@ -137,7 +137,10 @@ private struct MemoCellView: View {
     fileprivate var body: some View {
         Button(
             action: {
-                pathModel.paths.append(.memoView(isCreatMode: false, memo: memo))
+                pathModel.paths.append(.memoView(
+                    isCreatMode: false,
+                    memo: memo
+                ))
             },
             label: {
                 VStack(spacing: 10) {

@@ -65,6 +65,7 @@ extension MemoListViewModel {
     }
     
     func memoRemoveSelectedBoxTapped(_ memo: Memo) {
+        // removeMemos에 있는 값과 메모가 같으면 지우면서 삭제 취소
         if let index = removeMemos.firstIndex(of: memo) {
             removeMemos.remove(at: index)
         } else {
@@ -73,9 +74,11 @@ extension MemoListViewModel {
     }
     
     func removeBtnTapped() {
+        // memos를 순회하면서 removeMemos에 있는 값과 일치한 memo들 전부 삭제
         memos.removeAll { memo in
             removeMemos.contains(memo)
         }
+        // 삭제 체크시 removeMemos에 쌓인 값도 모두 제거
         removeMemos.removeAll()
         isEditMemoMode = false
     }
