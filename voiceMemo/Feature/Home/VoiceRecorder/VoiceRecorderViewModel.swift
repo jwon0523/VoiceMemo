@@ -7,10 +7,11 @@ import AVFoundation
 
 class VoiceRecorderViewModel: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var isDisplayRemoveVoiceRecorderAlert: Bool
-    @Published var isDisplayErrorAlert: Bool
-    @Published var errorAlertMessage: String
+    @Published var isDisplayAlert: Bool
+    @Published var alertMessage: String
     
     /// 음성메모 녹음 관련 프로퍼티
+    var audioRecorder: AVAudioRecorder?
     @Published var isRecording: Bool
     
     /// 음성메모 재생 관련 프로퍼티
@@ -18,7 +19,7 @@ class VoiceRecorderViewModel: NSObject, ObservableObject, AVAudioPlayerDelegate 
     @Published var isPlaying: Bool
     @Published var isPaused: Bool
     @Published var playedTime: TimeInterval
-    private var progressTime: Timer?
+    private var progressTimer: Timer?
     
     /// 음성메모된 파일
     var recordedFiles: [URL]
@@ -38,8 +39,8 @@ class VoiceRecorderViewModel: NSObject, ObservableObject, AVAudioPlayerDelegate 
         selectedRecoredFile: URL? = nil
     ) {
         self.isDisplayRemoveVoiceRecorderAlert = isDisplayRemoveVoiceRecorderAlert
-        self.isDisplayErrorAlert = isDisplayErrorAlert
-        self.errorAlertMessage = errorAlertMessage
+        self.isDisplayAlert = isDisplayErrorAlert
+        self.alertMessage = errorAlertMessage
         self.isRecording = isRecording
         self.isPlaying = isPlaying
         self.isPaused = isPaused
@@ -58,13 +59,13 @@ extension VoiceRecorderViewModel {
     }
     
     func removeBtnTapped() {
-        // TODO: -삭제 얼럿 노출을 위한 상태 변경 메서드 호출
+        setIsDisplayRemoveVoiceRecorderAlert(true)
     }
     
     func removeSelectedVoiceRecord() {
         guard let fileToRemove = selectedRecoredFile,
               let indextToRemove = recordedFiles.firstIndex(of: fileToRemove) else {
-            // TODO: - 선택된 음성메모를 찾을 수 없다는 에러 얼럿 노출
+            displayAlert(message: "선택된 음성메모 파일을 찾을 수 없습니다.")
             return
         }
         
@@ -73,9 +74,9 @@ extension VoiceRecorderViewModel {
             recordedFiles.remove(at: indextToRemove)
             selectedRecoredFile = nil
             // TODO: - 재생 정지 메서드 호출
-            // TODO: - 삭제 성공 얼럿 노출
+            displayAlert(message: "선택된 음성메모 파일을 성공적으로 삭제했습니다.")
         } catch {
-            // TODO: - 삭제 실패 오류 얼럿 노출
+            displayAlert(message: "선택된 음성메모 파일 삭제 중 오류가 발생했습니다.")
         }
     }
     
@@ -84,15 +85,60 @@ extension VoiceRecorderViewModel {
     }
     
     private func setErrorAlertMessage(_ message: String) {
-        errorAlertMessage = message
+        alertMessage = message
     }
     
     private func setIsDisplayErrorAlert(_ isDisplay: Bool) {
-        isDisplayErrorAlert = isDisplay
+        isDisplayAlert = isDisplay
     }
     
-    private func displayError(message: String) {
+    private func displayAlert(message: String) {
         setErrorAlertMessage(message)
         setIsDisplayErrorAlert(true)
+    }
+}
+
+// MARK: - 음성메모 녹음 관련
+extension VoiceRecorderViewModel {
+    func recordBtnTapped() {
+        selectedRecoredFile = nil
+        
+        if isPlaying {
+            // TODO: - 재생 정지 메서드 호출
+            // TODO: - 재생 시작 메서드 호출
+        } else if isRecording {
+            // TODO: - 녹음 정지 메서드 호출
+        } else {
+            // TODO: - 녹음 시작 메서드 호출
+        }
+    }
+    
+    private func startRecording() {
+        let fileURL = getDocumentsDirectory().appendingPathComponent("새로운 녹음 \(recordedFiles.count + 1)")
+        let settings = [
+            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+            AVSampleRateKey: 12000,
+            AVNumberOfChannelsKey: 1,
+            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+        ]
+        
+        do {
+            audioRecorder = try AVAudioRecorder(url: fileURL, settings: settings)
+            audioRecorder?.record()
+            self.isRecording = true
+        } catch {
+            displayAlert(message: "음성메모 녹음 중 오류가 발생했습니다.")
+        }
+    }
+    
+    private func stopRecording() {
+        audioRecorder?.stop()
+        self.recordedFiles.append(self.audioRecorder!.url)
+        self.isRecording = false
+    }
+    
+    private func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
     }
 }
