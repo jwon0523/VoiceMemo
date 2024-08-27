@@ -15,7 +15,7 @@ struct OnboardingView: View {
     var body: some View {
         NavigationStack(path: $pathModel.paths) {
             // TodoListView가 제대로 작동하는지 확인을 위한 주석처리
-            //          OnboardingContentView(onboardingViewModel: onboardingViewModel)
+//            OnboardingContentView(onboardingViewModel: onboardingViewModel)
             MemoListView()
                 .environmentObject(memoListViewModel)
                 .navigationDestination(for: PathType.self) { pathType in
@@ -31,6 +31,7 @@ struct OnboardingView: View {
                         MemoView(
                             memoViewModel: isCreateMode
                             ? .init(memo: .init(title: "", content: "", date: .now))
+                            // 수정 모드인데 메모 없을 경우 초기화
                             : .init(memo: memo ?? .init(title: "", content: "", date: .now)),
                             isCreateMode: isCreateMode
                         )
