@@ -16,7 +16,7 @@ struct OnboardingView: View {
         NavigationStack(path: $pathModel.paths) {
             // TodoListView가 제대로 작동하는지 확인을 위한 주석처리
 //            OnboardingContentView(onboardingViewModel: onboardingViewModel)
-            MemoListView()
+            VoiceRecorderView()
                 .environmentObject(memoListViewModel)
                 .navigationDestination(for: PathType.self) { pathType in
                     switch pathType {
