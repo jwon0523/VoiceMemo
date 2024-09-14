@@ -31,17 +31,17 @@ extension TimerViewModel {
   func settingBtnTapped() {
     isDisplaySetTimeView = false
     timeRemaining = time.convertedSeconds
-    // TODO: - 타이머 시작 메서드 호출
+    startTimer()
   }
   
-  func cancelBtnTagged() {
-    // TODO: - 타이머 종료 메서드 호출
+  func cancelBtnTapped() {
+    stopTimer()
     isDisplaySetTimeView = true
   }
   
   func pauseOrRestartBtnTapped() {
     if isPaused {
-      // TODO: - 타이머 시작 메서드 호출
+      startTimer()
     } else {
       timer?.invalidate()
       timer = nil
